@@ -1,9 +1,6 @@
 from fastapi import FastAPI
-from data.database import test_database_connection
+from controllers import health_check_controller
 
 app = FastAPI()
 
-
-@app.on_event("startup")
-def startup_event():
-    test_database_connection()
+app.include_router(health_check_controller.router)

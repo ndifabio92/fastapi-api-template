@@ -1,23 +1,36 @@
-version: "3.8"
+version: "3.9"
 
 services:
   web:
     build: .
     ports:
-      - "8000:8000"
+      - 8000:8000
+    volumes:
+      - ./api:/app/api
     environment:
-      - DATABASE_URL=postgresql+psycopg://user:password@db:5432/database
+      - DATABASE_URL=postgresql+psycopg://myuser:mysecretpassword@db:5432/mydatabase
     depends_on:
       - db
+      - adminer
 
   db:
-    image: postgres:15
+    image: postgres:latest
+    restart: always
+    container_name: my_postgres
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: database
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_USER: myuser
+      POSTGRES_DB: mydatabase
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
